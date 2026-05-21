@@ -1,0 +1,19 @@
+# R project user files (machine-specific)
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Quarto render outputs (regenerated automatically)
+_site/
+_book/
+/.quarto/
+
+# R package build artifacts
+*.tar.gz
+*.so
+*.dll
+
+# OS files
+.DS_Store
+Thumbs.db
