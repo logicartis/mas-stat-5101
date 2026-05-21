@@ -17,3 +17,5 @@ _book/
 # OS files
 .DS_Store
 Thumbs.db
+
+**/*.quarto_ipynb

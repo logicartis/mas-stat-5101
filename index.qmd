@@ -1,0 +1,7 @@
+---
+title: "MAS STAT-5101 Statistical Methods"
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
