@@ -577,25 +577,34 @@ Attaching package: 'dplyr'</code></pre>
 `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
 </div>
 </div>
-<p>Save a template plot:</p>
+<p>Save a plot for HW1 submission:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"creativity_boxplot.png"</span>, <span class="at">plot =</span> creativity_setup2, </span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>creativity_setup2 <span class="sc">+</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab01_creativity_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"creativity_boxplot.png"</span>, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="self-assessment" class="level3">
 <h3 class="anchored" data-anchor-id="self-assessment">Self-Assessment</h3>
 <p>Read tomato.csv</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>tomato_df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/tomato.csv"</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tomato_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>tomato_df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/tomato.csv"</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tomato_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "treatment" "yield"    </code></pre>
 </div>
 </div>
 <p>View the first 6 records</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tomato_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tomato_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  treatment yield
 1         a  0.39
@@ -608,9 +617,9 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <p>Draw side-by-side box plots of each yield for each of the two fertilizers</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tomato_df, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">y =</span> yield)) <span class="sc">+</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tomato_df, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">y =</span> yield)) <span class="sc">+</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -621,18 +630,18 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <p>Estimate the difference in mean yield between the two fertilizers (a - b). Include units.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>mean_a <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"a"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>mean_b <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"b"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Mean difference: "</span>, <span class="fu">round</span>(mean_a <span class="sc">-</span> mean_b, <span class="dv">2</span>), <span class="st">"pounds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>mean_a <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"a"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>mean_b <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"b"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Mean difference: "</span>, <span class="fu">round</span>(mean_a <span class="sc">-</span> mean_b, <span class="dv">2</span>), <span class="st">"pounds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Mean difference:  6.53 pounds"</code></pre>
 </div>
 </div>
 <p>Estimate the difference between in median yield the two fertilizers (a - b). Include units.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>median_a <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"a"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">median</span>()</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>median_b <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"b"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">median</span>()</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Median difference: "</span>, <span class="fu">round</span>(median_a <span class="sc">-</span> median_b, <span class="dv">2</span>), <span class="st">"pounds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>median_a <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"a"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">median</span>()</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>median_b <span class="ot">=</span> tomato_df <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment <span class="sc">==</span> <span class="st">"b"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(yield) <span class="sc">|&gt;</span> <span class="fu">median</span>()</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Median difference: "</span>, <span class="fu">round</span>(median_a <span class="sc">-</span> median_b, <span class="dv">2</span>), <span class="st">"pounds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Median difference:  4.64 pounds"</code></pre>
 </div>

@@ -221,11 +221,14 @@ Save the last plot
 ggsave("figure.png")
 ```
 
-Save a template plot:
+Save a plot for HW1 submission:
 
 ```{r}
-ggsave("creativity_boxplot.png", plot = creativity_setup2, 
-       width = 6, height = 4, dpi = 300)
+creativity_setup2 + 
+    geom_boxplot() +
+    theme_classic()
+
+ggsave("creativity_boxplot.png", width = 6, height = 4, dpi = 300)
 ```
 
 ### Self-Assessment
