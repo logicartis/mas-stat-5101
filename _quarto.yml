@@ -18,8 +18,20 @@ website:
         text: Home
       - href: about.qmd
         text: About
-      - href: labs/lab01_creativity.qmd
-        text: Lab 01
+      - text: Labs
+        menu:
+          - href: labs/lab01_creativity.qmd
+            text: Lab 01 — Creativity Study
+          - href: labs/lab02_randomization.qmd
+            text: Lab 02 — Randomization Test
+      - text: Exercises
+        menu:
+          - href: exercises/ch01_exercises.qmd
+            text: Chapter 1 Exercises
+      - text: Milestones
+        menu:
+          - href: milestones/milestone1.qmd
+            text: Milestone 1
     right:
       - icon: github
         href: https://github.com/logicartis/mas-stat-5101
