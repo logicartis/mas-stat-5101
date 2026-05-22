@@ -1,0 +1,268 @@
+---
+title: "Lab 01 — Introduction to R and the Creativity Study"
+author: "Ashish Pant"
+date: "2026-05-21"
+format: html
+---
+
+## 1. Rocks
+
+1.  The one that I believe best represents the average weight of the population is 13.
+2.  5 rocks that I believe best represents the average weight of the population are 13, 7, 83, 81 and 62.
+3.  5 rocks that best represent variability are 67, 69, 13, 95 amd 84
+
+## 2. Introduction to Computing
+
+### Basics
+
+Load necessary packages
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+Read CSV
+
+```{r}
+creativity <- read.csv("../data/creativity.csv")
+names(creativity)
+```
+
+Print the first 6 (default) observations
+
+```{r}
+head(creativity)
+```
+
+Quick six-number summary of numerical column score
+
+```{r}
+summary(creativity$score)
+```
+
+Summarize all variables
+
+```{r}
+summarize(creativity)
+```
+
+### Using the "pipe" operator \|\>
+
+```{r}
+creativity |>
+    head()
+```
+
+Select columns from a data frame
+
+```{r}
+creativity |>
+    select(score) |>
+    head()
+```
+
+Return six-number summary on the score column
+
+```{r}
+creativity |>
+    pull(score) |> # pull extracts a vector of the column values
+    summary()
+```
+
+Return the mean of the score column
+
+```{r}
+creativity |>
+    pull(score) |>
+    mean()
+```
+
+Return mean using summarize:
+
+```{r}
+creativity |>
+    summarize(
+        meanScore = mean(score)
+    )
+```
+
+Summarize many expressions
+
+```{r}
+creativity |>
+    summarize(
+        meanScore = mean(score),
+        medianScore = median(score),
+        sdScore = sd(score)
+    )
+```
+
+Calculate summaries by treatment group
+
+```{r}
+creativity |>
+    group_by(treatment) |>
+    summarize(
+        meanScore = mean(score),
+        medianScore = median(score),
+        sdScore = sd(score)
+    )
+```
+
+### Plotting Data
+
+Create a dot plot
+
+- Center all dots on x-axis value 1
+
+- y is the score variable
+
+- binaxis is the axis to bin along, using y here
+
+- stackdir specifies direction in which dots are stacked
+
+```{r}
+ggplot(data = creativity, mapping = aes(x = 1, y = score)) +
+    geom_dotplot(binwidth = 1, binaxis = "y", stackdir = "center")
+```
+
+Create dot plots by treatment group
+
+- Use the treatment column in the x-axis
+
+```{r}
+ggplot(data = creativity, mapping = aes(x = treatment, y = score)) +
+    geom_dotplot(binwidth = 1, binaxis = "y", stackdir = "center")
+```
+
+Avoid redundancy by building a template and adding different geom layers to the template
+
+- Create a template
+
+```{r}
+creativity_setup1 <- ggplot(data = creativity, mapping = aes(x = score))
+```
+
+- Add geom layer - histogram
+
+```{r}
+creativity_setup1 + geom_histogram()
+```
+
+- Add geom layer box_plot
+
+```{r}
+creativity_setup1 + geom_boxplot()
+```
+
+- Flip the box plot x and y axes
+
+```{r}
+creativity_setup1 + 
+    coord_flip() +
+    geom_boxplot()
+```
+
+Work with treatment group
+
+```{r}
+creativity_setup2 <- ggplot(data = creativity, mapping = aes(x = treatment, y = score))
+```
+
+- Draw box plot per treatment group
+
+```{r}
+creativity_setup2 + geom_boxplot()
+```
+
+- Change theme to classic theme and redraw the same box plot
+
+```{r}
+creativity_setup2 + 
+    geom_boxplot() +
+    theme_classic()
+```
+
+Specify different colors to visually separate groups
+
+- Create the template
+
+```{r}
+creativity_setup3 <- ggplot(
+    data = creativity, 
+    mapping = aes(
+        x = score,
+        fill = treatment,
+        color = treatment
+    )
+)
+```
+
+- Draw histogram
+
+```{r}
+creativity_setup3 + 
+    geom_histogram(position = "dodge")
+```
+
+- Change color scale
+
+```{r}
+creativity_setup3 +
+    scale_color_grey() + 
+    scale_fill_grey() +
+    geom_histogram(position = "dodge")
+```
+
+Save the last plot
+
+```{r}
+ggsave("figure.png")
+```
+
+Save a template plot:
+
+```{r}
+ggsave("creativity_boxplot.png", plot = creativity_setup2, 
+       width = 6, height = 4, dpi = 300)
+```
+
+### Self-Assessment
+
+Read tomato.csv
+
+```{r}
+tomato_df <- read.csv("../data/tomato.csv")
+names(tomato_df)
+```
+
+View the first 6 records
+
+```{r}
+head(tomato_df)
+```
+
+Draw side-by-side box plots of each yield for each of the two fertilizers
+
+```{r}
+ggplot(data = tomato_df, mapping = aes(x = treatment, y = yield)) +
+    geom_boxplot() +
+    theme_classic()
+```
+
+Estimate the difference in mean yield between the two fertilizers (a - b). Include units.
+
+```{r}
+mean_a = tomato_df |> filter(treatment == "a") |> pull(yield) |> mean()
+mean_b = tomato_df |> filter(treatment == "b") |> pull(yield) |> mean()
+paste("Mean difference: ", round(mean_a - mean_b, 2), "pounds")
+```
+
+Estimate the difference between in median yield the two fertilizers (a - b). Include units.
+
+```{r}
+median_a = tomato_df |> filter(treatment == "a") |> pull(yield) |> median()
+median_b = tomato_df |> filter(treatment == "b") |> pull(yield) |> median()
+paste("Median difference: ", round(median_a - median_b, 2), "pounds")
+```

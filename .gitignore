@@ -19,3 +19,4 @@ _book/
 Thumbs.db
 
 **/*.quarto_ipynb
+.quarto/
