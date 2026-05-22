@@ -18,6 +18,8 @@ website:
         text: Home
       - href: about.qmd
         text: About
+      - href: labs/lab01_creativity.qmd
+        text: Lab 01
     right:
       - icon: github
         href: https://github.com/logicartis/mas-stat-5101
