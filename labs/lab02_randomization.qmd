@@ -1,0 +1,184 @@
+---
+title: "Lab 02 — Standard Errors and Randomization Tests"
+author: "Ashish Pant"
+date: "2026-05-26"
+format: html
+---
+
+### Load libraries
+
+Load tidyverse library
+
+```{r}
+library(tidyverse)
+library(here) # resolves files from the project root regardless of where qmd lives
+```
+
+### Writing functions in R
+
+Load data (user header=TRUE)
+
+```{r}
+creativity <- read.csv(here("data/creativity.csv"), header = TRUE)
+head(creativity)
+```
+
+Define function for computing the standard error
+
+```{r}
+se <- function(x) {
+    s <- sd(x, na.rm = TRUE)
+    n <- sum(!is.na(x))
+    s / sqrt(n)
+}
+```
+
+Calculate standard error for all 47 observation scores (just the score column)
+
+```{r}
+se(creativity$score)
+```
+
+Using tidyverse, summarize the standard error (a different way to calculate)
+
+```{r}
+creativity |>
+    summarize(
+        se = se(score)
+    )
+```
+
+Group by treatment and compute the standard error by treatment group
+
+```{r}
+creativity |>
+    group_by(treatment) |>
+    summarize(
+        se = se(score)
+    )
+```
+
+### Randomization Tests
+
+First set seed for reproducibility
+
+```{r}
+set.seed(5101)
+```
+
+Calculate the observed difference in mean score (observed means as documented in creativity.csv)
+
+```{r}
+observed_diff <- creativity |>
+    group_by(treatment) |>
+    summarize(mean_score = mean(score)) |>
+    summarize(diff = diff(mean_score)) |>
+    pull(diff)
+
+observed_diff
+```
+
+Run randomization (basically, simulate what else, other than what was recorded in the csv, could have been observed at random)
+
+```{r}
+nsim <- 10000
+simulated_diffs <- replicate(nsim, {
+    # Everthing in {} is evaluated as if it was a function (this is like a lambda)
+    creativity |>
+        # generate a random treatment value
+        mutate(shuffled = sample(treatment)) |>
+        # group by the random treatment value
+        group_by(shuffled) |>
+        # Calculate the mean and diff like before
+        summarize(mean_score = mean(score)) |>
+        summarize(diff = diff(mean_score)) |>
+        # pull the difference
+        pull(diff)
+})
+head(simulated_diffs)
+```
+
+Calculate the p-value
+
+```{r}
+p_value <- (1 + sum(abs(simulated_diffs) >= abs(observed_diff))) / (nsim + 1)
+p_value
+```
+
+Explanation of p-value calculation: The p-value is the number of observations with a value equal to or more extreme (\>=) than the observed value divided by the number of observations. This would translate to:
+
+sum(abs(simulated_diffs) \>= abs(simulated_diff)) / nsim
+
+But, this results in a 0 p-value if by chance the observed_diff was an extreme value itself and none of the simulated values were equal or larger resulting in 0 / nsim = 0, which is an impossible p-value.
+
+By adding 1 to both the numerator and denominator, essentially, we are including the observed_diff in the calculation. Since observed_diff is equal to itself, it is valid to include it as a count in the numerator and increment the denominator by 1 as if we performed 10001 simulations instead of 10000.
+
+### Self Assessment
+
+Read in the tomato data, tomato.csv
+
+```{r}
+tomato <- read.csv(here("data/tomato.csv"), header = TRUE)
+head(tomato)
+```
+
+#### (a) Draw side-by-side box plots of the yield for each fertilizer
+
+```{r}
+ggplot(data = tomato, mapping=aes(x = treatment, y = yield)) +
+    geom_boxplot()
+```
+
+#### (b) Estimate the difference in mean yield between the two fertilizers (a-b)
+
+```{r}
+observed_diff = tomato |>
+    group_by(treatment) |>
+    summarize(mean_yield = mean(yield)) |>
+    summarize(diff = diff(mean_yield)) |>
+    pull(diff)
+observed_diff
+```
+
+#### (c) Estimate the difference in median yield
+
+```{r}
+tomato |>
+    group_by(treatment) |>
+    summarize(median_yield = median(yield)) |>
+    summarize(diff = diff(median_yield)) |>
+    pull(diff)
+
+```
+
+#### (d) Use a randomization test to test the null hypothesis of no effect of the fertilizer on mean yield. Report the two-sided p-value
+
+Run randomization test and collect simulated diffs
+
+```{r}
+# Set seed for reproducibility
+set.seed(5101)
+
+# We have already calculated the observed diff above
+# Run randomization test
+
+nsim <- 10000
+simulated_diffs <- replicate(nsim, {
+    tomato |>
+        mutate(shuffled = sample(treatment)) |>
+        group_by(shuffled) |>
+        summarize(mean_yield = mean(yield)) |>
+        summarize(diff = diff(mean_yield)) |>
+        pull(diff)
+})
+head(simulated_diffs)
+```
+
+Calculate p-value
+
+```{r}
+p_value = (1 + sum(abs(simulated_diffs) >= abs(observed_diff))) / (nsim + 1)
+p_value
+```
+
+Comments: Treatment a (the proposed better fertilizer) produced a mean yield 6.53 pounds higher than treatment b (p = 0.037). This provides moderate evidence against the null hypothesis of no fertilizer effect — a difference this large would occur by chance alone only about 3.7% of the time under random assignment. Since the 7 plants per group were randomly assigned to treatments, a causal conclusion is justified: the better fertilizer caused higher yield in this experiment. However, since the 14 plants were not randomly selected from any broader population, we cannot generalize beyond these particular plants.
