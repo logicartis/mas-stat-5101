@@ -24,6 +24,10 @@ website:
             text: Lab 01 — Creativity Study
           - href: labs/lab02_randomization.qmd
             text: Lab 02 — Randomization Test
+      - text: Homeworks
+        menu:
+        - href: homeworks/hw02.qmd
+          text: HW 02 — Inference Practice
       - text: Exercises
         menu:
           - href: exercises/ch01_exercises.qmd

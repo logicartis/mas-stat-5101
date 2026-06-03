@@ -1,0 +1,130 @@
+---
+title: "HW 02 — Randomization Tests"
+author: "Ashish Pant"
+date: "2026-05-27"
+format: html
+---
+
+### Load Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+### Problem 1
+
+Problem 1 (Elderly hospitalization): You are conducting a study on hospital utilization among elderly residents in a small Iowa town. The focus is on the number of days each individual spent as an inpatient at the local hospital during 2023. To collect data, you begin with a complete list of all elderly residents in the town and then randomly select eleven individuals. For each of these residents, you record the total number of inpatient hospital days in 2023. The data are: 12, 3, 0, 0, 0, 4, 6, 7, 32, 14, 10. The data are also provided, for your convenience, in the file hospital.csv.
+
+```{r}
+hospital <- read.csv(here("data/hospital.csv"))
+hospital
+```
+
+#### (a) Calculate and report the mean of these data
+
+```{r}
+mean(hospital$days)
+```
+
+#### (b) Calculate and report the median of these data
+
+```{r}
+median(hospital$days)
+```
+
+#### (c) Calculate and report the standard deviation of these data
+
+```{r}
+sd(hospital$days)
+```
+
+For the next two parts, assume that patterns of hospitalization in 2026 will be the same as those in 2023. Also ignore the potential increase in hospitalization with age.
+
+#### (d) Answer to grandmother's question
+
+Imagine that your grandmother is an elderly resident of this small town. She hears about your work and asks you “how many days am I likely to be in hospitalized in 2026?” What number would you tell her? Briefly explain your choice.
+
+Answer: Since we have an outlier with 34 days, the mean is pulled towards it and is a little misleading. In this case, the median is a better answer since it is not affected by the outlier. So the answer is - Probably around 6 days but there is considerable variation.
+
+#### (e) Answer to hospital administrator's question
+
+Imagine that the administrator of the only hospital in town asks you: “Can you estimate the total number of person-days that the elderly of this town will be in the hospital in 2026?” There are predicted to be 605 elderly residents of the town in 2026. What number would you tell her? Briefly explain your choice.
+
+Answer: Person-Days are calculated using the mean. The median is not a right choice because its simply the midpoint. For sums and totals, mean is a better choice. Total Person-Days for 605 elderly residents would be 605 \* 8.18 \~= 4949. So, assuming that 2026 hospitalization patterns are the same as 2023, which means we can use the same mean value, the answer to the hospital administrator's question is 4949 days.
+
+### Problem 2
+
+Problem 2 (Radon levels): The file radon.txt contains measurements from a simple random sample of 42 owner-occupied homes in Ramsey County, Minnesota. Each number shows the level of radon gas (in pCi/L) found in that home. Radon is a naturally occurring radioactive gas that can build up indoors and may pose health risks, so studying its levels helps us understand potential exposure in the community.
+
+Read the radon.txt file
+
+```{r}
+radon <- read.csv(here("data/radon.txt"))
+head(radon)
+```
+
+#### (a) Draw a box plot of the radon concentrations
+
+Draw a box plot of the radon concentrations and say whether the distribution is symmetrical or skewed. Your answer is the plot and your description.
+
+```{r}
+ggplot(data = radon, mapping = aes(x = radon)) +
+    coord_flip() +
+    geom_boxplot()
+```
+
+Description: The distribution is skewed due to one outlier that is \>30. Other than that, most values are less than or around 10.
+
+#### (b) Calculate and report the average and median radon concentration
+
+```{r}
+mean_radon <- mean(radon$radon)
+median_radon <- median(radon$radon)
+paste("Mean radon:  ", round(mean_radon, 2), "pCi/L")
+paste("Median radon: ", round(median_radon, 2), "pCi/L")
+```
+
+#### (c) Would you expect the average and median for these data to be similar?
+
+No. Given the range of the data and the existence of an outlier away from the median, the mean will be pulled toward the outlier while the median will not.
+
+#### (d) Calculate the standard error of the mean radon concentration
+
+```{r}
+# SE = s / sqrt(n)
+# calculate s (standard deviation)
+s = sd(radon$radon)
+# determine n (number of observations)
+n = nrow(radon)
+s / sqrt(n)
+```
+
+Imagine you have taken a second simple random sample of radon in Ramsey County, MN, homes. There are 250 homes in this sample.
+
+#### (e) Would the second sample mean be close to the first sample?
+
+Yes, since both are random samples from the same population and the first sample has sufficient observations (42), we can expect the mean of the second sample to be close to the first but we should also expect some sampling variability.
+
+#### (f) Would the second sample standard error be close to that of the first?
+
+No, the standard error SE is calculated as `s / sqrt(n)`. Since the 2 samples are drawn randomly from the same population we can expect the standard deviation (s) to be close to that of the first sample but since the number of observations (n) in the 2nd sample are 250 vs 42 in the first, the SE for the 2nd sample will be lower.
+
+The standard deviation of the first sample, s = `r sd(radon$radon)` and se = `sd(radon$radon) / sqrt(42)` = `r sd(radon$radon) / sqrt(nrow(radon))`
+
+It is expected that the standard deviation remains close for both samples so the standard error for the 2nd sample se = `sd(radon$radon) / sqrt(250)` = `r sd(radon$radon) / sqrt(250)`
+
+### Problem 3
+
+Problem 3 (Mutagen effect): Scientists wanted to study whether a certain mutagen affects cell growth. They began with a large “master” cell culture and haphazardly took 9 vials from it. Four of these vials were randomly assigned to the control group (no mutagen), while the other five vials were assigned to the treatment group, where cells were exposed to 80 mg/ml dose of the mutagen. After giving the cells time to grow, the researchers examined them under a microscope. For each vial, they looked at 100 cells and counted how many showed microsatellite nuclei (tiny abnormalities that can signal mutations). The data (which are available in mutagen.csv) provide information about the treatment (no or dose) with the following values: - no: 0 dose (control): 0, 0, 0, 0 - dose: 80 mg/ml dose: 2, 3, 5, 11, 20
+
+Answer the following questions based on these data.
+
+#### (a) Design questions
+
+- What are the treatments in this study?
+  - The treatments in the study are no treatment (Control group) or a treatment of an 80 mg/dl dose of the mutagen (Dose group)
+- What, if anything, are they randomly assigned to?
+  - They are randomly assigned to vials of cell culture
+- Can causal conclusions be statistically justified? Why or why not?
+  - The vials were randomly drawn from the cell culture and the treatments were randomly assigned to vials so yes, causal conclusions can be justified. But, the number of observations (9 vials) in the study are on the lower side so the conclusions could vary if a larger sample was used.

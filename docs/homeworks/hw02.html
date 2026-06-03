@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ashish Pant">
-<meta name="dcterms.date" content="2026-05-26">
+<meta name="dcterms.date" content="2026-05-27">
 
-<title>Lab 02 — Standard Errors and Randomization Tests – MAS STAT-5101</title>
+<title>HW 02 — Randomization Tests – MAS STAT-5101</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -208,10 +208,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#load-libraries" id="toc-load-libraries" class="nav-link active" data-scroll-target="#load-libraries">Load libraries</a></li>
-  <li><a href="#writing-functions-in-r" id="toc-writing-functions-in-r" class="nav-link" data-scroll-target="#writing-functions-in-r">Writing functions in R</a></li>
-  <li><a href="#randomization-tests" id="toc-randomization-tests" class="nav-link" data-scroll-target="#randomization-tests">Randomization Tests</a></li>
-  <li><a href="#self-assessment" id="toc-self-assessment" class="nav-link" data-scroll-target="#self-assessment">Self Assessment</a></li>
+  <li><a href="#load-libraries" id="toc-load-libraries" class="nav-link active" data-scroll-target="#load-libraries">Load Libraries</a></li>
+  <li><a href="#problem-1" id="toc-problem-1" class="nav-link" data-scroll-target="#problem-1">Problem 1</a></li>
+  <li><a href="#problem-2" id="toc-problem-2" class="nav-link" data-scroll-target="#problem-2">Problem 2</a></li>
+  <li><a href="#problem-3" id="toc-problem-3" class="nav-link" data-scroll-target="#problem-3">Problem 3</a></li>
   </ul>
 </nav>
     </div>
@@ -220,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab 02 — Standard Errors and Randomization Tests</h1>
+<h1 class="title">HW 02 — Randomization Tests</h1>
 </div>
 
 
@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 26, 2026</p>
+      <p class="date">May 27, 2026</p>
     </div>
   </div>
   
@@ -250,8 +250,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <section id="load-libraries" class="level3">
-<h3 class="anchored" data-anchor-id="load-libraries">Load libraries</h3>
-<p>Load tidyverse library</p>
+<h3 class="anchored" data-anchor-id="load-libraries">Load Libraries</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -266,213 +265,171 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co"># resolves files from the project root regardless of where qmd lives</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>here() starts at /mnt/data1/documents/ISU/RProjects/STAT5101</code></pre>
 </div>
 </div>
 </section>
-<section id="writing-functions-in-r" class="level3">
-<h3 class="anchored" data-anchor-id="writing-functions-in-r">Writing functions in R</h3>
-<p>Load data (user header=TRUE)</p>
+<section id="problem-1" class="level3">
+<h3 class="anchored" data-anchor-id="problem-1">Problem 1</h3>
+<p>Problem 1 (Elderly hospitalization): You are conducting a study on hospital utilization among elderly residents in a small Iowa town. The focus is on the number of days each individual spent as an inpatient at the local hospital during 2023. To collect data, you begin with a complete list of all elderly residents in the town and then randomly select eleven individuals. For each of these residents, you record the total number of inpatient hospital days in 2023. The data are: 12, 3, 0, 0, 0, 4, 6, 7, 32, 14, 10. The data are also provided, for your convenience, in the file hospital.csv.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>creativity <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data/creativity.csv"</span>), <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(creativity)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>hospital <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data/hospital.csv"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>hospital</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  treatment score
-1 intrinsic  12.0
-2 intrinsic  12.0
-3 intrinsic  12.9
-4 intrinsic  13.6
-5 intrinsic  16.6
-6 intrinsic  17.2</code></pre>
+<pre><code>   days
+1    12
+2     3
+3     0
+4     0
+5     0
+6     4
+7     6
+8     7
+9    34
+10   14
+11   10</code></pre>
 </div>
 </div>
-<p>Define function for computing the standard error</p>
+<section id="a-calculate-and-report-the-mean-of-these-data" class="level4">
+<h4 class="anchored" data-anchor-id="a-calculate-and-report-the-mean-of-these-data">(a) Calculate and report the mean of these data</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    s <span class="ot">&lt;-</span> <span class="fu">sd</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    s <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Calculate standard error for all 47 observation scores (just the score column)</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">se</span>(creativity<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(hospital<span class="sc">$</span>days)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.7653046</code></pre>
-</div>
-</div>
-<p>Using tidyverse, summarize the standard error (a different way to calculate)</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>creativity <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">se =</span> <span class="fu">se</span>(score)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>         se
-1 0.7653046</code></pre>
-</div>
-</div>
-<p>Group by treatment and compute the standard error by treatment group</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>creativity <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(treatment) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">se =</span> <span class="fu">se</span>(score)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  treatment    se
-  &lt;chr&gt;     &lt;dbl&gt;
-1 extrinsic 1.10 
-2 intrinsic 0.906</code></pre>
+<pre><code>[1] 8.181818</code></pre>
 </div>
 </div>
 </section>
-<section id="randomization-tests" class="level3">
-<h3 class="anchored" data-anchor-id="randomization-tests">Randomization Tests</h3>
-<p>First set seed for reproducibility</p>
+<section id="b-calculate-and-report-the-median-of-these-data" class="level4">
+<h4 class="anchored" data-anchor-id="b-calculate-and-report-the-median-of-these-data">(b) Calculate and report the median of these data</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5101</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Calculate the observed difference in mean score (observed means as documented in creativity.csv)</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>observed_diff <span class="ot">&lt;-</span> creativity <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(treatment) <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">mean_score =</span> <span class="fu">mean</span>(score)) <span class="sc">|&gt;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">diff =</span> <span class="fu">diff</span>(mean_score)) <span class="sc">|&gt;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(diff)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>observed_diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(hospital<span class="sc">$</span>days)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4.100725</code></pre>
+<pre><code>[1] 6</code></pre>
 </div>
 </div>
-<p>Run randomization (basically, simulate what else, other than what was recorded in the csv, could have been observed at random)</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>simulated_diffs <span class="ot">&lt;-</span> <span class="fu">replicate</span>(nsim, {</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Everthing in {} is evaluated as if it was a function (this is like a lambda)</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    creativity <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># generate a random treatment value</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">shuffled =</span> <span class="fu">sample</span>(treatment)) <span class="sc">|&gt;</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># group by the random treatment value</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(shuffled) <span class="sc">|&gt;</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate the mean and diff like before</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize</span>(<span class="at">mean_score =</span> <span class="fu">mean</span>(score)) <span class="sc">|&gt;</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize</span>(<span class="at">diff =</span> <span class="fu">diff</span>(mean_score)) <span class="sc">|&gt;</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># pull the difference</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pull</span>(diff)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(simulated_diffs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1]  2.7043478  1.4356884  0.9077899 -1.6465580  0.8141304  1.8614130</code></pre>
-</div>
-</div>
-<p>Calculate the p-value</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">sum</span>(<span class="fu">abs</span>(simulated_diffs) <span class="sc">&gt;=</span> <span class="fu">abs</span>(observed_diff))) <span class="sc">/</span> (nsim <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.00489951</code></pre>
-</div>
-</div>
-<p>Explanation of p-value calculation: The p-value is the number of observations with a value equal to or more extreme (&gt;=) than the observed value divided by the number of observations. This would translate to:</p>
-<p>sum(abs(simulated_diffs) &gt;= abs(simulated_diff)) / nsim</p>
-<p>But, this results in a 0 p-value if by chance the observed_diff was an extreme value itself and none of the simulated values were equal or larger resulting in 0 / nsim = 0, which is an impossible p-value.</p>
-<p>By adding 1 to both the numerator and denominator, essentially, we are including the observed_diff in the calculation. Since observed_diff is equal to itself, it is valid to include it as a count in the numerator and increment the denominator by 1 as if we performed 10001 simulations instead of 10000.</p>
 </section>
-<section id="self-assessment" class="level3">
-<h3 class="anchored" data-anchor-id="self-assessment">Self Assessment</h3>
-<p>Read in the tomato data, tomato.csv</p>
+<section id="c-calculate-and-report-the-standard-deviation-of-these-data" class="level4">
+<h4 class="anchored" data-anchor-id="c-calculate-and-report-the-standard-deviation-of-these-data">(c) Calculate and report the standard deviation of these data</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>tomato <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data/tomato.csv"</span>), <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tomato)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(hospital<span class="sc">$</span>days)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  treatment yield
-1         a  0.39
-2         b  0.44
-3         a  1.83
-4         a  5.66
-5         b  0.33
-6         a  8.06</code></pre>
+<pre><code>[1] 9.847012</code></pre>
 </div>
 </div>
-<section id="a-draw-side-by-side-box-plots-of-the-yield-for-each-fertilizer" class="level4">
-<h4 class="anchored" data-anchor-id="a-draw-side-by-side-box-plots-of-the-yield-for-each-fertilizer">(a) Draw side-by-side box plots of the yield for each fertilizer</h4>
+<p>For the next two parts, assume that patterns of hospitalization in 2026 will be the same as those in 2023. Also ignore the potential increase in hospitalization with age.</p>
+</section>
+<section id="d-answer-to-grandmothers-question" class="level4">
+<h4 class="anchored" data-anchor-id="d-answer-to-grandmothers-question">(d) Answer to grandmother’s question</h4>
+<p>Imagine that your grandmother is an elderly resident of this small town. She hears about your work and asks you “how many days am I likely to be in hospitalized in 2026?” What number would you tell her? Briefly explain your choice.</p>
+<p>Answer: Since we have an outlier with 34 days, the mean is pulled towards it and is a little misleading. In this case, the median is a better answer since it is not affected by the outlier. So the answer is - Probably around 6 days but there is considerable variation.</p>
+</section>
+<section id="e-answer-to-hospital-administrators-question" class="level4">
+<h4 class="anchored" data-anchor-id="e-answer-to-hospital-administrators-question">(e) Answer to hospital administrator’s question</h4>
+<p>Imagine that the administrator of the only hospital in town asks you: “Can you estimate the total number of person-days that the elderly of this town will be in the hospital in 2026?” There are predicted to be 605 elderly residents of the town in 2026. What number would you tell her? Briefly explain your choice.</p>
+<p>Answer: Person-Days are calculated using the mean. The median is not a right choice because its simply the midpoint. For sums and totals, mean is a better choice. Total Person-Days for 605 elderly residents would be 605 * 8.18 ~= 4949. So, assuming that 2026 hospitalization patterns are the same as 2023, which means we can use the same mean value, the answer to the hospital administrator’s question is 4949 days.</p>
+</section>
+</section>
+<section id="problem-2" class="level3">
+<h3 class="anchored" data-anchor-id="problem-2">Problem 2</h3>
+<p>Problem 2 (Radon levels): The file radon.txt contains measurements from a simple random sample of 42 owner-occupied homes in Ramsey County, Minnesota. Each number shows the level of radon gas (in pCi/L) found in that home. Radon is a naturally occurring radioactive gas that can build up indoors and may pose health risks, so studying its levels helps us understand potential exposure in the community.</p>
+<p>Read the radon.txt file</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tomato, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x =</span> treatment, <span class="at">y =</span> yield)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>radon <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data/radon.txt"</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(radon)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  radon
+1   3.8
+2   1.7
+3   5.5
+4   2.1
+5   1.6
+6   6.5</code></pre>
+</div>
+</div>
+<section id="a-draw-a-box-plot-of-the-radon-concentrations" class="level4">
+<h4 class="anchored" data-anchor-id="a-draw-a-box-plot-of-the-radon-concentrations">(a) Draw a box plot of the radon concentrations</h4>
+<p>Draw a box plot of the radon concentrations and say whether the distribution is symmetrical or skewed. Your answer is the plot and your description.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> radon, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> radon)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab02_randomization_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="hw02_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Description: The distribution is skewed due to one outlier that is &gt;30. Other than that, most values are less than or around 10.</p>
 </section>
-<section id="b-estimate-the-difference-in-mean-yield-between-the-two-fertilizers-a-b" class="level4">
-<h4 class="anchored" data-anchor-id="b-estimate-the-difference-in-mean-yield-between-the-two-fertilizers-a-b">(b) Estimate the difference in mean yield between the two fertilizers (a-b)</h4>
+<section id="b-calculate-and-report-the-average-and-median-radon-concentration" class="level4">
+<h4 class="anchored" data-anchor-id="b-calculate-and-report-the-average-and-median-radon-concentration">(b) Calculate and report the average and median radon concentration</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>observed_diff <span class="ot">=</span> tomato <span class="sc">|&gt;</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(treatment) <span class="sc">|&gt;</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">mean_yield =</span> <span class="fu">mean</span>(yield)) <span class="sc">|&gt;</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">diff =</span> <span class="fu">diff</span>(mean_yield)) <span class="sc">|&gt;</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(diff)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>observed_diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mean_radon <span class="ot">&lt;-</span> <span class="fu">mean</span>(radon<span class="sc">$</span>radon)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>median_radon <span class="ot">&lt;-</span> <span class="fu">median</span>(radon<span class="sc">$</span>radon)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Mean radon:  "</span>, <span class="fu">round</span>(mean_radon, <span class="dv">2</span>), <span class="st">"pCi/L"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -6.531429</code></pre>
+<pre><code>[1] "Mean radon:   4.55 pCi/L"</code></pre>
 </div>
-</div>
-</section>
-<section id="c-estimate-the-difference-in-median-yield" class="level4">
-<h4 class="anchored" data-anchor-id="c-estimate-the-difference-in-median-yield">(c) Estimate the difference in median yield</h4>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tomato <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(treatment) <span class="sc">|&gt;</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">median_yield =</span> <span class="fu">median</span>(yield)) <span class="sc">|&gt;</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">diff =</span> <span class="fu">diff</span>(median_yield)) <span class="sc">|&gt;</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(diff)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Median radon: "</span>, <span class="fu">round</span>(median_radon, <span class="dv">2</span>), <span class="st">"pCi/L"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -4.64</code></pre>
+<pre><code>[1] "Median radon:  3.5 pCi/L"</code></pre>
 </div>
 </div>
 </section>
-<section id="d-use-a-randomization-test-to-test-the-null-hypothesis-of-no-effect-of-the-fertilizer-on-mean-yield.-report-the-two-sided-p-value" class="level4">
-<h4 class="anchored" data-anchor-id="d-use-a-randomization-test-to-test-the-null-hypothesis-of-no-effect-of-the-fertilizer-on-mean-yield.-report-the-two-sided-p-value">(d) Use a randomization test to test the null hypothesis of no effect of the fertilizer on mean yield. Report the two-sided p-value</h4>
-<p>Run randomization test and collect simulated diffs</p>
+<section id="c-would-you-expect-the-average-and-median-for-these-data-to-be-similar" class="level4">
+<h4 class="anchored" data-anchor-id="c-would-you-expect-the-average-and-median-for-these-data-to-be-similar">(c) Would you expect the average and median for these data to be similar?</h4>
+<p>No.&nbsp;Given the range of the data and the existence of an outlier away from the median, the mean will be pulled toward the outlier while the median will not.</p>
+</section>
+<section id="d-calculate-the-standard-error-of-the-mean-radon-concentration" class="level4">
+<h4 class="anchored" data-anchor-id="d-calculate-the-standard-error-of-the-mean-radon-concentration">(d) Calculate the standard error of the mean radon concentration</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducibility</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5101</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We have already calculated the observed diff above</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run randomization test</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>simulated_diffs <span class="ot">&lt;-</span> <span class="fu">replicate</span>(nsim, {</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    tomato <span class="sc">|&gt;</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">shuffled =</span> <span class="fu">sample</span>(treatment)) <span class="sc">|&gt;</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(shuffled) <span class="sc">|&gt;</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize</span>(<span class="at">mean_yield =</span> <span class="fu">mean</span>(yield)) <span class="sc">|&gt;</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize</span>(<span class="at">diff =</span> <span class="fu">diff</span>(mean_yield)) <span class="sc">|&gt;</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pull</span>(diff)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(simulated_diffs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SE = s / sqrt(n)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate s (standard deviation)</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> <span class="fu">sd</span>(radon<span class="sc">$</span>radon)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># determine n (number of observations)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">nrow</span>(radon)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>s <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  2.305714 -1.914286  4.940000  2.337143 -1.040000 -3.597143</code></pre>
+<pre><code>[1] 0.7556078</code></pre>
 </div>
 </div>
-<p>Calculate p-value</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">=</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">sum</span>(<span class="fu">abs</span>(simulated_diffs) <span class="sc">&gt;=</span> <span class="fu">abs</span>(observed_diff))) <span class="sc">/</span> (nsim <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>p_value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.03659634</code></pre>
-</div>
-</div>
-<p>Comments: Treatment a (the proposed better fertilizer) produced a mean yield 6.53 pounds higher than treatment b (p = 0.037). This provides moderate evidence against the null hypothesis of no fertilizer effect — a difference this large would occur by chance alone only about 3.7% of the time under random assignment. Since the 7 plants per group were randomly assigned to treatments, a causal conclusion is justified: the better fertilizer caused higher yield in this experiment. However, since the 14 plants were not randomly selected from any broader population, we cannot generalize beyond these particular plants.</p>
+<p>Imagine you have taken a second simple random sample of radon in Ramsey County, MN, homes. There are 250 homes in this sample.</p>
+</section>
+<section id="e-would-the-second-sample-mean-be-close-to-the-first-sample" class="level4">
+<h4 class="anchored" data-anchor-id="e-would-the-second-sample-mean-be-close-to-the-first-sample">(e) Would the second sample mean be close to the first sample?</h4>
+<p>Yes, since both are random samples from the same population and the first sample has sufficient observations (42), we can expect the mean of the second sample to be close to the first but we should also expect some sampling variability.</p>
+</section>
+<section id="f-would-the-second-sample-standard-error-be-close-to-that-of-the-first" class="level4">
+<h4 class="anchored" data-anchor-id="f-would-the-second-sample-standard-error-be-close-to-that-of-the-first">(f) Would the second sample standard error be close to that of the first?</h4>
+<p>No, the standard error SE is calculated as <code>s / sqrt(n)</code>. Since the 2 samples are drawn randomly from the same population we can expect the standard deviation (s) to be close to that of the first sample but since the number of observations (n) in the 2nd sample are 250 vs 42 in the first, the SE for the 2nd sample will be lower.</p>
+<p>The standard deviation of the first sample, s = 4.8968981 and se = <code>sd(radon$radon) / sqrt(42)</code> = 0.7556078</p>
+<p>It is expected that the standard deviation remains close for both samples so the standard error for the 2nd sample se = <code>sd(radon$radon) / sqrt(250)</code> = 0.309707</p>
+</section>
+</section>
+<section id="problem-3" class="level3">
+<h3 class="anchored" data-anchor-id="problem-3">Problem 3</h3>
+<p>Problem 3 (Mutagen effect): Scientists wanted to study whether a certain mutagen affects cell growth. They began with a large “master” cell culture and haphazardly took 9 vials from it. Four of these vials were randomly assigned to the control group (no mutagen), while the other five vials were assigned to the treatment group, where cells were exposed to 80 mg/ml dose of the mutagen. After giving the cells time to grow, the researchers examined them under a microscope. For each vial, they looked at 100 cells and counted how many showed microsatellite nuclei (tiny abnormalities that can signal mutations). The data (which are available in mutagen.csv) provide information about the treatment (no or dose) with the following values: - no: 0 dose (control): 0, 0, 0, 0 - dose: 80 mg/ml dose: 2, 3, 5, 11, 20</p>
+<p>Answer the following questions based on these data.</p>
+<section id="a-design-questions" class="level4">
+<h4 class="anchored" data-anchor-id="a-design-questions">(a) Design questions</h4>
+<ul>
+<li>What are the treatments in this study?
+<ul>
+<li>The treatments in the study are no treatment (Control group) or a treatment of an 80 mg/dl dose of the mutagen (Dose group)</li>
+</ul></li>
+<li>What, if anything, are they randomly assigned to?
+<ul>
+<li>They are randomly assigned to vials of cell culture</li>
+</ul></li>
+<li>Can causal conclusions be statistically justified? Why or why not?
+<ul>
+<li>The vials were randomly drawn from the cell culture and the treatments were randomly assigned to vials so yes, causal conclusions can be justified. But, the number of observations (9 vials) in the study are on the lower side so the conclusions could vary if a larger sample was used.</li>
+</ul></li>
+</ul>
 
 
 </section>
